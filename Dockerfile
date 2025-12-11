@@ -13,18 +13,19 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["tictactoe blazor.csproj", "."]
-RUN dotnet restore "./tictactoe blazor.csproj"
+RUN dotnet restore "./tictactoe blazor 2 users.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./tictactoe blazor.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./tictactoe blazor 2 users.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./tictactoe blazor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./tictactoe blazor 2 users.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "tictactoe_blazor.dll"]
